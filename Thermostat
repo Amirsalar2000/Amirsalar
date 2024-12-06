@@ -1,0 +1,42 @@
+% پارامترهای اولیه
+dt = 0.1; % زمان نمونه‌برداری (ثانیه)
+time = 0:dt:100; % زمان شبیه‌سازی (0 تا 100 ثانیه)
+setpoint = 25; % دمای هدف (درجه سانتیگراد)
+initial_temp = 20; % دمای اولیه
+
+% متغیرها
+temperature = zeros(size(time)); % آرایه برای ذخیره دما
+temperature(1) = initial_temp; % تنظیم دمای اولیه
+
+% شبیه‌سازی کنترل دما
+for i = 2:length(time)
+    % محاسبه خطا
+    error = setpoint - temperature(i-1);
+    
+    % مدل کنترل PID ساده
+    Kp = 0.5; % ضریب تناسبی
+    control_signal = Kp * error; % سیگنال کنترل
+    
+    % به‌روزرسانی دما
+    temperature(i) = temperature(i-1) + control_signal * dt + randn * 0.1; % اضافه کردن نویز
+end
+
+% رسم نتایج
+figure;
+plot(time, temperature, 'LineWidth', 1.5);
+hold on;
+yline(setpoint, 'r--', 'دمای هدف', 'LineWidth', 1.5); % خط دمای هدف
+title('شبیه‌سازی سیستم کنترل دما');
+xlabel('زمان (ثانیه)');
+ylabel('دمای (درجه سانتیگراد)');
+grid on;
+legend('دمای واقعی', 'دمای هدف');
+hold off;
+
+% تحلیل داده‌ها
+max_temp = max(temperature);
+min_temp = min(temperature);
+mean_temp = mean(temperature);
+disp(['حداکثر دما: ', num2str(max_temp)]);
+disp(['حداقل دما: ', num2str(min_temp)]);
+disp(['میانگین دما: ', num2str(mean_temp)]);
